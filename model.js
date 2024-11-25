@@ -65,23 +65,46 @@ export class GuessrModel extends EventTarget {
   // Method to process a guess and update the Pokédex if correct
   async guess(pokemon_name) {
     try {
-      // Retrieve the target Pokémon's data
       const targetPokemon = await this.get_pokemon_info(this.#pokemon_id);
 
       if (!targetPokemon) {
         console.error("Failed to retrieve Pokémon data for guessing.");
-        return;
+        return null;
       }
 
-      // Check if the guessed Pokémon name matches the target
-      if (targetPokemon.name.toLowerCase() === pokemon_name.toLowerCase()) {
+      const targetName = targetPokemon.name.toUpperCase();
+      const guessedName = pokemon_name.toUpperCase();
+
+      // Generate feedback
+      const feedback = {
+        correct: targetName === guessedName,
+        letters: [],
+      };
+
+      // Letter-by-letter feedback
+      for (let i = 0; i < guessedName.length; i++) {
+        const letter = guessedName[i];
+        const isCorrectPosition = targetName[i] === letter;
+        const isPresent = targetName.includes(letter) && !isCorrectPosition;
+
+        feedback.letters.push({
+          letter,
+          correct: isCorrectPosition,
+          present: isPresent,
+        });
+      }
+
+      if (feedback.correct) {
         console.log("Correct guess! Adding Pokémon to Pokédex.");
-        await this.update_user_data(targetPokemon); // Add Pokémon to Pokédex
+        await this.update_user_data(targetPokemon);
       } else {
         console.log("Incorrect guess.");
       }
+
+      return feedback; // Return the feedback object
     } catch (error) {
       console.error("Error during guessing:", error);
+      return null;
     }
   }
 

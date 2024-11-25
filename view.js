@@ -5,6 +5,9 @@ export class GuessrView {
   constructor(model, controller) {
     this.#model = model;
     this.#controller = controller;
+    this.currentRow = 0;
+    this.currentCol = 0;
+    this.inputGrid = [];
   }
 
   render(render_div) {
@@ -187,9 +190,11 @@ export class GuessrView {
 
   render_page(render_div) {
     this.#model.start_game().then(() => {
-      render_div.innerHTML = "";
-
+      this.currentRow = 0;
+      this.currentCol = 0;
       const pokemonLength = this.#model.get_pokemon_name_length();
+      this.inputGrid = Array(6).fill("").map(() => Array(pokemonLength).fill(""));
+      render_div.innerHTML = "";
 
       // Render the Wordle Grid
       const gridContainer = document.createElement("div");
@@ -223,74 +228,91 @@ export class GuessrView {
     keyboardContainer.className = "keyboard";
 
     const rows = [
-        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
-        ["A", "S", "D", "F", "G", "H", "J", "K", "L"],  
-        ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"],
+      ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+      ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+      ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"],
     ];
 
     rows.forEach((row) => {
-        const rowDiv = document.createElement("div");
-        rowDiv.className = "keyboard-row";
+      const rowDiv = document.createElement("div");
+      rowDiv.className = "keyboard-row";
 
-        row.forEach((key) => {
-            const keyButton = document.createElement("button");
-            keyButton.textContent = key;
-            keyButton.id = key;
-            keyButton.className = "key";
+      row.forEach((key) => {
+        const keyButton = document.createElement("button");
+        keyButton.textContent = key;
+        keyButton.id = key;
+        keyButton.className = "key";
 
-            if (key === "ENTER") keyButton.id = "enter";
-            else if (key === "⌫") keyButton.id = "backspace";
+        if (key === "ENTER") keyButton.id = "enter";
+        else if (key === "⌫") keyButton.id = "backspace";
 
-            rowDiv.appendChild(keyButton);
+        rowDiv.appendChild(keyButton);
 
-            keyButton.addEventListener("click", () => {
-                this.handle_key_press(key);
-            });
+        keyButton.addEventListener("click", () => {
+          this.handle_key_press(key);
         });
+      });
 
-        keyboardContainer.appendChild(rowDiv);
+      keyboardContainer.appendChild(rowDiv);
     });
 
     render_div.appendChild(keyboardContainer);
-}
+  }
 
+  handle_key_press(key) {
+    const pokemonLength = this.#model.get_pokemon_name_length();
+    const grid = document.querySelector(".guess-grid");
+    const rows = grid.querySelectorAll(".row");
+    const currentCells = rows[this.currentRow].children;
+
+    if (key === "ENTER") {
+      if (this.currentCol < pokemonLength) return;
+      const currentGuess = this.inputGrid[this.currentRow].join("");
+      this.submit_guess(currentGuess, this.currentRow, grid.parentElement);
+      this.update_grid_color(this.inputGrid, this.currentRow);
+      this.update_keyboard_color(this.currentRow);
+
+      this.currentRow++;
+      this.currentCol = 0;
+    } else if (key === "⌫" || key === "BACKSPACE") {
+      if (this.currentCol > 0) {
+        this.currentCol--;
+        this.inputGrid[this.currentRow][this.currentCol] = "";
+        currentCells[this.currentCol].textContent = "";
+      }
+    } else if (/^[A-Z]$/.test(key)) {
+      if (this.currentCol < pokemonLength) {
+        this.inputGrid[this.currentRow][this.currentCol] = key;
+        currentCells[this.currentCol].textContent = key;
+        this.currentCol++;
+      }
+    }
+  }
 
   handle_user_input(pokemonLength, render_div) {
-    let currentRow = 0;
-    let currentCol = 0;
-    const inputGrid = Array(6)
-      .fill("")
-      .map(() => Array(pokemonLength).fill(""));
-
     document.addEventListener("keydown", (event) => {
       const key = event.key.toUpperCase();
 
       if (key === "ENTER") {
-        if (currentCol === pokemonLength) {
-          this.submit_guess(
-            inputGrid[currentRow].join(""),
-            currentRow,
-            render_div
-          );
+        if (this.currentCol < pokemonLength) return;
 
-          this.update_grid_color(inputGrid, currentRow);
-          this.update_keyboard_color(currentRow);
+        const currentGuess = this.inputGrid[this.currentRow].join("");
+        this.submit_guess(currentGuess, this.currentRow, render_div);
+        this.update_grid_color(this.inputGrid, this.currentRow);
+        this.update_keyboard_color(this.currentRow);
 
-          currentRow++;
-          currentCol = 0;
-        } else {
-          alert("Not enough letters");
-        }
+        this.currentRow++;
+        this.currentCol = 0;
       } else if (key === "BACKSPACE" || key === "⌫") {
-        if (currentCol > 0) {
-          currentCol--;
-          inputGrid[currentRow][currentCol] = "";
-          this.update_grid(inputGrid, currentRow);
+        if (this.currentCol > 0) {
+          this.currentCol--;
+          this.inputGrid[this.currentRow][this.currentCol] = "";
+          this.update_grid(this.inputGrid, this.currentRow);
         }
-      } else if (/^[A-Z]$/.test(key) && currentCol < pokemonLength) {
-        inputGrid[currentRow][currentCol] = key;
-        currentCol++;
-        this.update_grid(inputGrid, currentRow);
+      } else if (/^[A-Z]$/.test(key) && this.currentCol < pokemonLength) {
+        this.inputGrid[this.currentRow][this.currentCol] = key;
+        this.currentCol++;
+        this.update_grid(this.inputGrid, this.currentRow);
       }
     });
   }
@@ -360,19 +382,35 @@ export class GuessrView {
   }
 
   submit_guess(guess, row, render_div) {
-    this.#model.guess(guess).then((feedback) => {
-      this.provide_feedback(feedback, row);
-
-      if (feedback.correct) {
-        alert("Congratulations! You guessed the Pokémon!");
-        this.#model.update_user_data();
-        this.add_restart_button(render_div);
-      } else if (row === 5) {
-        alert("Game Over! Better luck next time.");
-        this.add_restart_button(render_div);
-      }
-    });
-  }
+    console.log("Submitting Guess:", guess);
+  
+    this.#model
+      .guess(guess)
+      .then((feedback) => {
+        if (!feedback || !feedback.letters) {
+          console.error("Invalid feedback structure:", feedback);
+          alert("Error: Unable to process guess. Please try again.");
+          return;
+        }
+  
+        console.log("Feedback received:", feedback);
+  
+        this.provide_feedback(feedback, row);
+  
+        if (feedback.correct) {
+          alert("Congratulations! You guessed the Pokémon!");
+          this.#model.update_user_data();
+          this.add_restart_button(render_div);
+        } else if (row === 5) {
+          alert("Game Over! Better luck next time.");
+          this.add_restart_button(render_div);
+        }
+      })
+      .catch((error) => {
+        console.error("Error in model.guess():", error);
+        alert("An error occurred while processing your guess.");
+      });
+  }  
 
   provide_feedback(feedback, row) {
     if (!feedback || !feedback.letters) {
