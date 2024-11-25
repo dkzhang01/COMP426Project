@@ -287,7 +287,7 @@ export class GuessrView {
           );
 
           this.update_grid_color(inputGrid, currentRow);
-          // Update keyboard colors
+          this.update_keyboard_color(currentRow);
 
           currentRow++;
           currentCol = 0;
@@ -321,14 +321,10 @@ export class GuessrView {
     const rowElements = document.querySelectorAll(
       `.row:nth-child(${currentRow + 1}) .cell`
     );
-
     const pokemonName = this.#model.get_pokemon_name().toUpperCase();
-    console.log("update_grid_color", pokemonName);
 
     inputGrid[currentRow].forEach((letter, index) => {
       let backgroundColor;
-      console.log(pokemonName[index], letter);
-      console.log(typeof pokemonName[index], typeof letter);
 
       if (pokemonName[index] === letter) {
         backgroundColor = "#459525"; // Green: Correct letter and position
@@ -337,12 +333,44 @@ export class GuessrView {
       } else {
         backgroundColor = "#3a3a3c"; // Gray: Letter not in the name
       }
-
       rowElements[index].style.backgroundColor = backgroundColor;
     });
   }
 
-  update_keyboard_color() {}
+  update_keyboard_color(currentRow) {
+    const rowElements = document.querySelectorAll(
+      `.row:nth-child(${currentRow + 1}) .cell`
+    );
+
+    rowElements.forEach((cell) => {
+      const letter = cell.textContent;
+      const keyButton = document.getElementById(letter);
+
+      // Get computed background colors in RGB format
+      const cellColor = window.getComputedStyle(cell).backgroundColor;
+      const keyButtonColor = window.getComputedStyle(keyButton).backgroundColor;
+
+      console.log(cell, cellColor);
+
+      // Update keyboard color based on guess correctness
+      if (cellColor === "rgb(69, 149, 37)") {
+        // Green
+        keyButton.style.backgroundColor = "rgb(69, 149, 37)";
+      } else if (
+        cellColor === "rgb(175, 154, 56)" &&
+        keyButtonColor !== "rgb(69, 149, 37)"
+      ) {
+        // Yellow
+        keyButton.style.backgroundColor = "rgb(175, 154, 56)";
+      } else if (
+        cellColor === "rgb(58, 58, 60)" &&
+        keyButtonColor === "rgb(129, 131, 132)"
+      ) {
+        // Gray
+        keyButton.style.backgroundColor = "rgb(58, 58, 60)";
+      }
+    });
+  }
 
   submit_guess(guess, row, render_div) {
     this.#model.guess(guess).then((feedback) => {
