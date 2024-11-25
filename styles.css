@@ -88,6 +88,40 @@ body {
     border-radius: 5px;
 }
 
+.spritehint {
+    background-color: #3a3a3c;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 5px;
+    margin: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hintrow {
+    display: flex;
+    justify-content: center;
+    border: 1px solid black;
+}
+.hintrowe {
+    background-color: #3a3a3c;
+    width: 200px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #fff;
+    border-radius: 5px;
+    margin: 20px;
+}
+
 .keyboard {
     display: flex;
     flex-direction: column;

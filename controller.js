@@ -37,7 +37,6 @@ export class GuessrController {
     if (this.#currentGuess.length === this.#maxCols) {
       // Ensure the guess has the correct number of letters
       console.log('Submitting Guess:', this.#currentGuess.join(''))
-
       // Validate the guess by calling the model's guess method
       this.#model.guess(this.#currentGuess.join('')).then(isCorrect => {
         if (isCorrect) {

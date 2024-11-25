@@ -7,6 +7,7 @@ let controller = new GuessrController(model)
 let view = new GuessrView(model, controller)
 
 view.render(document.getElementById('main'))
+
 document.addEventListener('DOMContentLoaded', () => {
   const signupButton = document.getElementById('signup-btn')
   const mainContainer = document.getElementById('main')

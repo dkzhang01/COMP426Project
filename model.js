@@ -3,6 +3,10 @@ export class GuessrModel extends EventTarget {
   #pokemon_name;
   #pokemon_name_length;
   #baseUrl = "http://localhost:3000";
+  #pokemon_type1;
+  #pokemon_type2;
+  #pokemon_generation;
+  #pokemon_random_sprite;
 
   constructor() {
     super();
@@ -18,6 +22,17 @@ export class GuessrModel extends EventTarget {
   get_pokemon_name() {
     return this.#pokemon_name;
   }
+  get_pokemon_hints() {
+    return {
+      type1: this.#pokemon_type1,
+      type2: this.#pokemon_type2,
+      generation: this.#pokemon_generation
+    }
+  }
+
+  get_pokemon_sprite() {
+    return this.#pokemon_random_sprite
+  }
 
   // Method to start a new game by selecting a random Pokémon
   async start_game() {
@@ -25,12 +40,17 @@ export class GuessrModel extends EventTarget {
     const response = await fetch(
       `https://pokeapi.co/api/v2/pokemon/${randomId}` // Fetch Pokémon data from the PokeAPI
     );
+    const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${randomId}`)
     const targetPokemon = await response.json();
-
+    const targetPokemon2 = await response2.json()
     // Set the Pokémon data
     this.#pokemon_id = targetPokemon.id;
     this.#pokemon_name = targetPokemon.name.toString();
     this.#pokemon_name_length = targetPokemon.name.toString().length;
+    this.#pokemon_generation = targetPokemon2.generation["name"].replace("generation-", "")
+    this.#pokemon_type1 = targetPokemon.types[0]?.type?.name || "None"
+    this.#pokemon_type2 = targetPokemon.types[1]?.type?.name || "None"
+    this.#pokemon_random_sprite = targetPokemon.sprites["front_default"]
 
     console.log("Target Pokémon:", targetPokemon);
     console.log("Target Length", this.#pokemon_name_length);
