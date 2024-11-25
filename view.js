@@ -222,51 +222,38 @@ export class GuessrView {
     const keyboardContainer = document.createElement("div");
     keyboardContainer.className = "keyboard";
 
-    const keys = [
-      "Q",
-      "W",
-      "E",
-      "R",
-      "T",
-      "Y",
-      "U",
-      "I",
-      "O",
-      "P",
-      "A",
-      "S",
-      "D",
-      "F",
-      "G",
-      "H",
-      "J",
-      "K",
-      "L",
-      "ENTER",
-      "Z",
-      "X",
-      "C",
-      "V",
-      "B",
-      "N",
-      "M",
-      "⌫",
+    const rows = [
+        ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+        ["A", "S", "D", "F", "G", "H", "J", "K", "L"],  
+        ["ENTER", "Z", "X", "C", "V", "B", "N", "M", "⌫"],
     ];
 
-    keys.forEach((key) => {
-      const keyButton = document.createElement("button");
-      keyButton.textContent = key;
-      keyButton.id = key;
-      keyButton.className = "key";
-      keyboardContainer.appendChild(keyButton);
+    rows.forEach((row) => {
+        const rowDiv = document.createElement("div");
+        rowDiv.className = "keyboard-row";
 
-      keyButton.addEventListener("click", () => {
-        this.handle_key_press(key);
-      });
+        row.forEach((key) => {
+            const keyButton = document.createElement("button");
+            keyButton.textContent = key;
+            keyButton.id = key;
+            keyButton.className = "key";
+
+            if (key === "ENTER") keyButton.id = "enter";
+            else if (key === "⌫") keyButton.id = "backspace";
+
+            rowDiv.appendChild(keyButton);
+
+            keyButton.addEventListener("click", () => {
+                this.handle_key_press(key);
+            });
+        });
+
+        keyboardContainer.appendChild(rowDiv);
     });
 
     render_div.appendChild(keyboardContainer);
-  }
+}
+
 
   handle_user_input(pokemonLength, render_div) {
     let currentRow = 0;
