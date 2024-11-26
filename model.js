@@ -26,12 +26,12 @@ export class GuessrModel extends EventTarget {
     return {
       type1: this.#pokemon_type1,
       type2: this.#pokemon_type2,
-      generation: this.#pokemon_generation
-    }
+      generation: this.#pokemon_generation,
+    };
   }
 
   get_pokemon_sprite() {
-    return this.#pokemon_random_sprite
+    return this.#pokemon_random_sprite;
   }
 
   // Method to start a new game by selecting a random Pokémon
@@ -40,17 +40,22 @@ export class GuessrModel extends EventTarget {
     const response = await fetch(
       `https://pokeapi.co/api/v2/pokemon/${randomId}` // Fetch Pokémon data from the PokeAPI
     );
-    const response2 = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${randomId}`)
+    const response2 = await fetch(
+      `https://pokeapi.co/api/v2/pokemon-species/${randomId}`
+    );
     const targetPokemon = await response.json();
-    const targetPokemon2 = await response2.json()
+    const targetPokemon2 = await response2.json();
     // Set the Pokémon data
     this.#pokemon_id = targetPokemon.id;
     this.#pokemon_name = targetPokemon.name.toString();
     this.#pokemon_name_length = targetPokemon.name.toString().length;
-    this.#pokemon_generation = targetPokemon2.generation["name"].replace("generation-", "")
-    this.#pokemon_type1 = targetPokemon.types[0]?.type?.name || "None"
-    this.#pokemon_type2 = targetPokemon.types[1]?.type?.name || "None"
-    this.#pokemon_random_sprite = targetPokemon.sprites["front_default"]
+    this.#pokemon_generation = targetPokemon2.generation["name"].replace(
+      "generation-",
+      ""
+    );
+    this.#pokemon_type1 = targetPokemon.types[0]?.type?.name || "None";
+    this.#pokemon_type2 = targetPokemon.types[1]?.type?.name || "None";
+    this.#pokemon_random_sprite = targetPokemon.sprites["front_default"];
 
     console.log("Target Pokémon:", targetPokemon);
     console.log("Target Length", this.#pokemon_name_length);
@@ -96,23 +101,7 @@ export class GuessrModel extends EventTarget {
       const guessedName = pokemon_name.toUpperCase();
 
       // Generate feedback
-      const feedback = {
-        correct: targetName === guessedName,
-        letters: [],
-      };
-
-      // Letter-by-letter feedback
-      for (let i = 0; i < guessedName.length; i++) {
-        const letter = guessedName[i];
-        const isCorrectPosition = targetName[i] === letter;
-        const isPresent = targetName.includes(letter) && !isCorrectPosition;
-
-        feedback.letters.push({
-          letter,
-          correct: isCorrectPosition,
-          present: isPresent,
-        });
-      }
+      const feedback = { correct: targetName === guessedName };
 
       if (feedback.correct) {
         console.log("Correct guess! Adding Pokémon to Pokédex.");

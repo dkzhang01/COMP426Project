@@ -13,7 +13,7 @@ export class GuessrView {
   render(render_div) {
     this.render_landing_page(render_div);
   }
-  
+
   render_landing_page(render_div) {
     render_div.innerHTML = "";
 
@@ -193,35 +193,37 @@ export class GuessrView {
       this.currentRow = 0;
       this.currentCol = 0;
       const pokemonLength = this.#model.get_pokemon_name_length();
-      this.inputGrid = Array(6).fill("").map(() => Array(pokemonLength).fill(""));
+      this.inputGrid = Array(6)
+        .fill("")
+        .map(() => Array(pokemonLength).fill(""));
       render_div.innerHTML = "";
       // Render the Hints Section
       const hintContainer = document.createElement("div");
-      hintContainer.className = "hintcontainer"
+      hintContainer.className = "hintcontainer";
       let type1hint = document.createElement("div");
       //type1hint.className="cell";
-      type1hint.id="type1hint";
-      type1hint.textContent = "Type1: 2 More Guesses!"
-      type1hint.className = "hintrowe"
+      type1hint.id = "type1hint";
+      type1hint.textContent = "Type1: 2 More Guesses!";
+      type1hint.className = "hintrowe";
       let type2hint = document.createElement("div");
       //type2hint.className="cell";
-      type2hint.id="type2hint";
-      type2hint.textContent = "Type2: 3 More Guesses!"
-      type2hint.className = "hintrowe"
+      type2hint.id = "type2hint";
+      type2hint.textContent = "Type2: 3 More Guesses!";
+      type2hint.className = "hintrowe";
       let regionhint = document.createElement("div");
       //regionhint.className="cell";
-      regionhint.id="regionhint";
-      regionhint.textContent = "Generation: 1 More Guess!"
-      regionhint.className = "hintrowe"
+      regionhint.id = "regionhint";
+      regionhint.textContent = "Generation: 1 More Guess!";
+      regionhint.className = "hintrowe";
       let spritehint = document.createElement("div");
-      spritehint.className = "spritehint"
-      spritehint.id = "spritehint"
-      spritehint.textContent = "Sprite: 4 More Guesses!"
+      spritehint.className = "spritehint";
+      spritehint.id = "spritehint";
+      spritehint.textContent = "Sprite: 4 More Guesses!";
       let hintrow1 = document.createElement("div");
-      hintrow1.append(regionhint, type1hint, type2hint)
+      hintrow1.append(regionhint, type1hint, type2hint);
       hintContainer.append(hintrow1, spritehint);
       hintrow1.className = "hintrow";
-      hintContainer.className = "hintContainer"
+      hintContainer.className = "hintContainer";
       render_div.appendChild(hintContainer);
 
       // Render the Wordle Grid
@@ -387,8 +389,6 @@ export class GuessrView {
       const cellColor = window.getComputedStyle(cell).backgroundColor;
       const keyButtonColor = window.getComputedStyle(keyButton).backgroundColor;
 
-      console.log(cell, cellColor);
-
       // Update keyboard color based on guess correctness
       if (cellColor === "rgb(69, 149, 37)") {
         // Green
@@ -411,64 +411,67 @@ export class GuessrView {
 
   submit_guess(guess, row, render_div) {
     console.log("Submitting Guess:", guess);
-  
+
     this.#model
       .guess(guess)
       .then((feedback) => {
-        if (!feedback || !feedback.letters) {
+        if (!feedback) {
           console.error("Invalid feedback structure:", feedback);
           alert("Error: Unable to process guess. Please try again.");
           return;
         }
-  
+
         console.log("Feedback received:", feedback);
-  
-        this.provide_feedback(feedback, row);
-  
+
         if (feedback.correct) {
           alert("Congratulations! You guessed the Pokémon!");
           this.#model.update_user_data();
           this.add_restart_button(render_div);
         } else if (row == 0) {
           // Do hint1
-          let type1hint = document.getElementById("type1hint")
-          type1hint.textContent = "Type1: 1 More Guess!"
-          let type2hint = document.getElementById("type2hint")
-          type2hint.textContent = "Type2: 2 More Guesses!"
-          let regionhint = document.getElementById("regionhint")
-          regionhint.textContent = "Generation: " + this.#model.get_pokemon_hints()["generation"]
-          let spritehint = document.getElementById("spritehint")
-          spritehint.textContent = "Sprite: 3 More Guesses!"
+          let type1hint = document.getElementById("type1hint");
+          type1hint.textContent = "Type1: 1 More Guess!";
+
+          let type2hint = document.getElementById("type2hint");
+          type2hint.textContent = "Type2: 2 More Guesses!";
+
+          let regionhint = document.getElementById("regionhint");
+          regionhint.textContent =
+            "Generation: " + this.#model.get_pokemon_hints()["generation"];
+
+          let spritehint = document.getElementById("spritehint");
+          spritehint.textContent = "Sprite: 3 More Guesses!";
         } else if (row == 1) {
           // Do hint1
-          let type1hint = document.getElementById("type1hint")
-          type1hint.textContent = "Type1: " + this.#model.get_pokemon_hints()["type1"]
-          let type2hint = document.getElementById("type2hint")
-          type2hint.textContent = "Type2: 1 More Guess!"
-          let spritehint = document.getElementById("spritehint")
-          spritehint.textContent = "Sprite: 2 More Guesses!"
+          let type1hint = document.getElementById("type1hint");
+          type1hint.textContent =
+            "Type1: " + this.#model.get_pokemon_hints()["type1"];
+          let type2hint = document.getElementById("type2hint");
+          type2hint.textContent = "Type2: 1 More Guess!";
+          let spritehint = document.getElementById("spritehint");
+          spritehint.textContent = "Sprite: 2 More Guesses!";
         } else if (row == 2) {
           //Do hint2
-          let type2hint = document.getElementById("type2hint")
-          type2hint.textContent = "Type2: " + this.#model.get_pokemon_hints()["type2"]
-          let spritehint = document.getElementById("spritehint")
-          spritehint.textContent = "Sprite: 1 More Guesses!"
+          let type2hint = document.getElementById("type2hint");
+          type2hint.textContent =
+            "Type2: " + this.#model.get_pokemon_hints()["type2"];
+          let spritehint = document.getElementById("spritehint");
+          spritehint.textContent = "Sprite: 1 More Guesses!";
         } else if (row == 3) {
           //Do hint2
-          let spritehint = document.getElementById("spritehint")
-          spritehint.textContent=""
-          let img = document.createElement('img');
-          img.style.width = '100%';
-          img.style.height = '100%';
-          img.style.objectFit = 'cover';
+          let spritehint = document.getElementById("spritehint");
+          spritehint.textContent = "";
+          let img = document.createElement("img");
+          img.style.width = "100%";
+          img.style.height = "100%";
+          img.style.objectFit = "cover";
           img.src = this.#model.get_pokemon_sprite();
           img.alt = "Pokemon Image";
           spritehint.append(img);
         } else if (row == 4) {
           //Do hint2
-          console.log("row4")
-        } 
-        else if (row === 5) {
+          console.log("row4");
+        } else if (row === 5) {
           alert("Game Over! Better luck next time.");
           this.add_restart_button(render_div);
         }
@@ -477,28 +480,6 @@ export class GuessrView {
         console.error("Error in model.guess():", error);
         alert("An error occurred while processing your guess.");
       });
-  }  
-
-  provide_feedback(feedback, row) {
-    if (!feedback || !feedback.letters) {
-      console.error("Invalid feedback structure:", feedback);
-      return;
-    }
-
-    const rowElements = document.querySelectorAll(
-      `.row:nth-child(${row + 1}) .cell`
-    );
-    feedback.letters.forEach((letterFeedback, index) => {
-      const cell = rowElements[index];
-      cell.textContent = letterFeedback.letter;
-      if (letterFeedback.correct) {
-        cell.classList.add("correct");
-      } else if (letterFeedback.present) {
-        cell.classList.add("present");
-      } else {
-        cell.classList.add("absent");
-      }
-    });
   }
 
   add_restart_button(render_div) {
