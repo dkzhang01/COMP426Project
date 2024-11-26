@@ -47,7 +47,7 @@ export class GuessrModel extends EventTarget {
     const targetPokemon2 = await response2.json();
     // Set the Pokémon data
     this.#pokemon_id = targetPokemon.id;
-    this.#pokemon_name = targetPokemon.name.toString();
+    this.#pokemon_name = targetPokemon.name.toString().replace(/-/g, '');
     this.#pokemon_name_length = targetPokemon.name.toString().length;
     this.#pokemon_generation = targetPokemon2.generation["name"].replace(
       "generation-",
