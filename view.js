@@ -320,7 +320,9 @@ export class GuessrView {
   }
 
   handle_user_input(pokemonLength, render_div) {
-    document.addEventListener("keydown", (event) => {
+    document.removeEventListener("keydown", this.keydownHandler);
+
+    this.keydownHandler = (event) => {
       const key = event.key.toUpperCase();
 
       if (key === "ENTER") {
@@ -344,7 +346,9 @@ export class GuessrView {
         this.currentCol++;
         this.update_grid(this.inputGrid, this.currentRow);
       }
-    });
+    };
+
+    document.addEventListener("keydown", this.keydownHandler);
   }
 
   update_grid(inputGrid, currentRow) {
