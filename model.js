@@ -45,6 +45,14 @@ export class GuessrModel extends EventTarget {
     );
     const targetPokemon = await response.json();
     const targetPokemon2 = await response2.json();
+
+    const pokemonName = targetPokemon.name.toString().replace(/-/g, '');
+    // Check if the Pokémon name exceeds 9 characters
+    if (pokemonName.length > 9) {
+      await this.start_game(); 
+      return; 
+    }
+    
     // Set the Pokémon data
     this.#pokemon_id = targetPokemon.id;
     this.#pokemon_name = targetPokemon.name.toString().replace(/-/g, '');
