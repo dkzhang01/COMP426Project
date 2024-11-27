@@ -489,6 +489,7 @@ export class GuessrView {
 
   add_restart_button(render_div) {
     const restartButton = document.createElement("button");
+    restartButton.className = "restartButton";
     restartButton.textContent = "Play Again";
     restartButton.addEventListener("click", () => {
       this.render_page(render_div);
@@ -540,17 +541,6 @@ export class GuessrView {
       actual.height === guess.height &&
       actual.weight === guess.weight
     );
-  }
-
-  add_restart_button(render_div) {
-    const restartButton = document.createElement("button");
-    restartButton.type = "button";
-    restartButton.textContent = "Play Again!";
-    render_div.appendChild(restartButton);
-
-    restartButton.addEventListener("click", () => {
-      this.render_page(render_div);
-    });
   }
 
   render_pokedex(render_div) {
