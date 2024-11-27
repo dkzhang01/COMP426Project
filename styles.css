@@ -88,14 +88,23 @@ body {
     border-radius: 5px;
 }
 
+.hintContainer {
+    position: absolute;
+    width: 29%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
 .spritehint {
     background-color: #3a3a3c;
-    width: 400px;
-    height: 400px;
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 1em;
     font-weight: bold;
     color: #fff;
     border-radius: 5px;
@@ -103,23 +112,26 @@ body {
     margin-left: auto;
     margin-right: auto;
 }
+
 .hintrow {
     display: flex;
+    flex-wrap:wrap;
     justify-content: center;
-    border: 1px solid black;
 }
+
 .hintrowe {
     background-color: #3a3a3c;
-    width: 200px;
-    height: 100px;
+    width: 110px;
+    height: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 1em;
     font-weight: bold;
     color: #fff;
     border-radius: 5px;
-    margin: 20px;
+    margin: 10px;
+    padding: 10px;
 }
 
 .keyboard {

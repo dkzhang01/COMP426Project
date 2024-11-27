@@ -203,12 +203,12 @@ export class GuessrView {
       let type1hint = document.createElement("div");
       //type1hint.className="cell";
       type1hint.id = "type1hint";
-      type1hint.textContent = "Type1: 2 More Guesses!";
+      type1hint.textContent = "Type 1: 2 More Guesses!";
       type1hint.className = "hintrowe";
       let type2hint = document.createElement("div");
       //type2hint.className="cell";
       type2hint.id = "type2hint";
-      type2hint.textContent = "Type2: 3 More Guesses!";
+      type2hint.textContent = "Type 2: 3 More Guesses!";
       type2hint.className = "hintrowe";
       let regionhint = document.createElement("div");
       //regionhint.className="cell";
@@ -220,8 +220,8 @@ export class GuessrView {
       spritehint.id = "spritehint";
       spritehint.textContent = "Sprite: 4 More Guesses!";
       let hintrow1 = document.createElement("div");
-      hintrow1.append(regionhint, type1hint, type2hint);
-      hintContainer.append(hintrow1, spritehint);
+      hintrow1.append(type1hint, type2hint, regionhint);
+      hintContainer.append(spritehint, hintrow1);
       hintrow1.className = "hintrow";
       hintContainer.className = "hintContainer";
       render_div.appendChild(hintContainer);
@@ -469,6 +469,7 @@ export class GuessrView {
           img.style.width = "100%";
           img.style.height = "100%";
           img.style.objectFit = "cover";
+          img.style.filter = "brightness(0)";
           img.src = this.#model.get_pokemon_sprite();
           img.alt = "Pokemon Image";
           spritehint.append(img);
