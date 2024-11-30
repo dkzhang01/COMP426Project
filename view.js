@@ -8,6 +8,7 @@ export class GuessrView {
     this.currentRow = 0;
     this.currentCol = 0;
     this.inputGrid = [];
+    this.keyboardDisabled = false;
   }
 
   render(render_div) {
@@ -283,6 +284,7 @@ export class GuessrView {
         rowDiv.appendChild(keyButton);
 
         keyButton.addEventListener("click", () => {
+          if (this.keyboardDisabled) return; // Prevent clicking if keyboard is disabled
           this.handle_key_press(key);
         });
       });
@@ -327,6 +329,7 @@ export class GuessrView {
     document.removeEventListener("keydown", this.keydownHandler);
 
     this.keydownHandler = (event) => {
+      if (this.keyboardDisabled) return; // Prevent input if keyboard is disabled
       const key = event.key.toUpperCase();
 
       if (key === "ENTER") {
@@ -434,7 +437,7 @@ export class GuessrView {
         if (feedback.correct) {
           this.handleCorrectGuess(render_div);
         } else {
-          this.handleIncorrectGuess(row);
+          this.handleIncorrectGuess(row, render_div);
         }
       })
       .catch((error) => {
@@ -446,6 +449,19 @@ export class GuessrView {
   handleCorrectGuess(render_div) {
     alert("Congratulations! You guessed the Pokémon!");
     this.#model.update_user_data();
+    this.disable_keyboard();
+
+    // Reveal all hints
+    const pokemonHints = this.#model.get_pokemon_hints();
+    const hintData = {
+      type1: pokemonHints["type1"],
+      type2: pokemonHints["type2"],
+      region: `Generation: ${pokemonHints["generation"]}`,
+      sprite: "Sprite: Revealed!",
+    };
+
+    // Update all hints
+    this.updateHints(hintData);
 
     // Reveal Pokemon sprite
     this.revealPokemonSprite();
@@ -453,7 +469,7 @@ export class GuessrView {
     this.add_restart_button(render_div);
   }
 
-  handleIncorrectGuess(row) {
+  handleIncorrectGuess(row, render_div) {
     const pokemonHints = this.#model.get_pokemon_hints();
     const hintData = this.getHintData(row, pokemonHints);
 
@@ -461,6 +477,10 @@ export class GuessrView {
 
     if (row === 3) {
       this.createSpriteHint();
+    }
+    if (row === 5) {
+      this.disable_keyboard();
+      this.add_restart_button(render_div);
     }
   }
 
@@ -537,9 +557,19 @@ export class GuessrView {
     restartButton.className = "restartButton";
     restartButton.textContent = "Play Again";
     restartButton.addEventListener("click", () => {
+      this.keyboardDisabled = false;
+
       this.render_page(render_div);
     });
     render_div.appendChild(restartButton);
+  }
+
+  disable_keyboard() {
+    this.keyboardDisabled = true;
+    const keys = document.querySelectorAll(".key");
+    keys.forEach((key) => {
+      key.disabled = true;
+    });
   }
 
   create_guess_row(details) {
