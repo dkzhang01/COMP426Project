@@ -46,16 +46,16 @@ export class GuessrModel extends EventTarget {
     const targetPokemon = await response.json();
     const targetPokemon2 = await response2.json();
 
-    const pokemonName = targetPokemon.name.toString().replace(/-/g, '');
+    const pokemonName = targetPokemon.name.toString().replace(/-/g, "");
     // Check if the Pokémon name exceeds 9 characters
     if (pokemonName.length > 9) {
-      await this.start_game(); 
-      return; 
+      await this.start_game();
+      return;
     }
-    
+
     // Set the Pokémon data
     this.#pokemon_id = targetPokemon.id;
-    this.#pokemon_name = targetPokemon.name.toString().replace(/-/g, '');
+    this.#pokemon_name = targetPokemon.name.toString().replace(/-/g, "");
     this.#pokemon_name_length = targetPokemon.name.toString().length;
     this.#pokemon_generation = targetPokemon2.generation["name"].replace(
       "generation-",
@@ -127,7 +127,7 @@ export class GuessrModel extends EventTarget {
 
   // Method to add Pokémon to the user's Pokédex
   async update_user_data(pokemon) {
-    if (!pokemon || !pokemon.name) {
+    if (!pokemon && !pokemon?.name) {
       console.error("Invalid Pokémon data:", pokemon);
       return;
     }
@@ -168,6 +168,8 @@ export class GuessrModel extends EventTarget {
       });
 
       const result = await response.json();
+      console.log("response", response);
+      console.log("result", result);
 
       if (response.ok) {
         alert("Pokédex updated successfully!");

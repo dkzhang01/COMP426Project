@@ -196,29 +196,33 @@ export class GuessrView {
       this.inputGrid = Array(6)
         .fill("")
         .map(() => Array(pokemonLength).fill(""));
+
       render_div.innerHTML = "";
+
       // Render the Hints Section
       const hintContainer = document.createElement("div");
       hintContainer.className = "hintcontainer";
+
       let type1hint = document.createElement("div");
-      //type1hint.className="cell";
       type1hint.id = "type1hint";
       type1hint.textContent = "Type 1: 2 More Guesses!";
       type1hint.className = "hintrowe";
+
       let type2hint = document.createElement("div");
-      //type2hint.className="cell";
       type2hint.id = "type2hint";
       type2hint.textContent = "Type 2: 3 More Guesses!";
       type2hint.className = "hintrowe";
+
       let regionhint = document.createElement("div");
-      //regionhint.className="cell";
       regionhint.id = "regionhint";
       regionhint.textContent = "Generation: 1 More Guess!";
       regionhint.className = "hintrowe";
+
       let spritehint = document.createElement("div");
       spritehint.className = "spritehint";
       spritehint.id = "spritehint";
       spritehint.textContent = "Sprite: 4 More Guesses!";
+
       let hintrow1 = document.createElement("div");
       hintrow1.append(type1hint, type2hint, regionhint);
       hintContainer.append(spritehint, hintrow1);
@@ -428,63 +432,104 @@ export class GuessrView {
         console.log("Feedback received:", feedback);
 
         if (feedback.correct) {
-          alert("Congratulations! You guessed the Pokémon!");
-          this.#model.update_user_data();
-          this.add_restart_button(render_div);
-        } else if (row == 0) {
-          // Do hint1
-          let type1hint = document.getElementById("type1hint");
-          type1hint.textContent = "Type1: 1 More Guess!";
-
-          let type2hint = document.getElementById("type2hint");
-          type2hint.textContent = "Type2: 2 More Guesses!";
-
-          let regionhint = document.getElementById("regionhint");
-          regionhint.textContent =
-            "Generation: " + this.#model.get_pokemon_hints()["generation"];
-
-          let spritehint = document.getElementById("spritehint");
-          spritehint.textContent = "Sprite: 3 More Guesses!";
-        } else if (row == 1) {
-          // Do hint1
-          let type1hint = document.getElementById("type1hint");
-          type1hint.textContent =
-            "Type1: " + this.#model.get_pokemon_hints()["type1"];
-          let type2hint = document.getElementById("type2hint");
-          type2hint.textContent = "Type2: 1 More Guess!";
-          let spritehint = document.getElementById("spritehint");
-          spritehint.textContent = "Sprite: 2 More Guesses!";
-        } else if (row == 2) {
-          //Do hint2
-          let type2hint = document.getElementById("type2hint");
-          type2hint.textContent =
-            "Type2: " + this.#model.get_pokemon_hints()["type2"];
-          let spritehint = document.getElementById("spritehint");
-          spritehint.textContent = "Sprite: 1 More Guesses!";
-        } else if (row == 3) {
-          //Do hint2
-          let spritehint = document.getElementById("spritehint");
-          spritehint.textContent = "";
-          let img = document.createElement("img");
-          img.style.width = "100%";
-          img.style.height = "100%";
-          img.style.objectFit = "cover";
-          img.style.filter = "brightness(0)";
-          img.src = this.#model.get_pokemon_sprite();
-          img.alt = "Pokemon Image";
-          spritehint.append(img);
-        } else if (row == 4) {
-          //Do hint2
-          console.log("row4");
-        } else if (row === 5) {
-          alert("Game Over! Better luck next time.");
-          this.add_restart_button(render_div);
+          this.handleCorrectGuess(render_div);
+        } else {
+          this.handleIncorrectGuess(row);
         }
       })
       .catch((error) => {
         console.error("Error in model.guess():", error);
         alert("An error occurred while processing your guess.");
       });
+  }
+
+  handleCorrectGuess(render_div) {
+    alert("Congratulations! You guessed the Pokémon!");
+    this.#model.update_user_data();
+
+    // Reveal Pokemon sprite
+    this.revealPokemonSprite();
+
+    this.add_restart_button(render_div);
+  }
+
+  handleIncorrectGuess(row) {
+    const pokemonHints = this.#model.get_pokemon_hints();
+    const hintData = this.getHintData(row, pokemonHints);
+
+    this.updateHints(hintData);
+
+    if (row === 3) {
+      this.createSpriteHint();
+    }
+  }
+
+  getHintData(row, pokemonHints) {
+    switch (row) {
+      case 0:
+        return {
+          type1: "1 More Guess!",
+          type2: "2 More Guesses!",
+          region: `Generation: ${pokemonHints["generation"]}`,
+          sprite: "Sprite: 3 More Guesses!",
+        };
+      case 1:
+        return {
+          type1: pokemonHints["type1"],
+          type2: "1 More Guess!",
+          sprite: "Sprite: 2 More Guesses!",
+        };
+      case 2:
+        return {
+          type2: pokemonHints["type2"],
+          sprite: "Sprite: 1 More Guesses!",
+        };
+      default:
+        return {};
+    }
+  }
+
+  updateHints({ type1, type2, region, sprite }) {
+    if (type1)
+      document.getElementById("type1hint").textContent = `Type1: ${type1}`;
+    if (type2)
+      document.getElementById("type2hint").textContent = `Type2: ${type2}`;
+    if (region) document.getElementById("regionhint").textContent = region;
+    if (sprite) document.getElementById("spritehint").textContent = sprite;
+  }
+
+  revealPokemonSprite() {
+    const sprite = document.getElementById("pokemonSprite");
+    if (sprite) {
+      sprite.style.filter = "brightness(100%)";
+    } else {
+      let spritehint = document.getElementById("spritehint");
+      spritehint.textContent = "";
+
+      let img = document.createElement("img");
+      img.id = "pokemonSprite";
+      img.style.width = "100%";
+      img.style.height = "100%";
+      img.style.objectFit = "cover";
+      img.src = this.#model.get_pokemon_sprite();
+      img.alt = "Pokemon Image";
+      spritehint.append(img);
+    }
+  }
+
+  createSpriteHint() {
+    let spritehint = document.getElementById("spritehint");
+    spritehint.textContent = "";
+
+    let img = document.createElement("img");
+    img.id = "pokemonSprite";
+    img.style.width = "100%";
+    img.style.height = "100%";
+    img.style.objectFit = "cover";
+    img.style.filter = "brightness(0)";
+    img.src = this.#model.get_pokemon_sprite();
+    img.alt = "Pokemon Image";
+    spritehint.append(img);
   }
 
   add_restart_button(render_div) {
