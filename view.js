@@ -22,12 +22,12 @@ export class GuessrView {
     logo.className = "logo";
 
     const logoImg = document.createElement("img");
-    logoImg.src = "/img/pokemon_wordle_logo.jpg";
+    logoImg.src = "./img/pokemon_wordle_logo.jpg";
     logoImg.alt = "Game Logo";
     logo.appendChild(logoImg);
 
     const title = document.createElement("h1");
-    title.textContent = "Wordle";
+    title.textContent = "Pokemondle";
 
     const subtitle = document.createElement("p");
     subtitle.textContent = "Get 6 chances to guess a 5-letter word.";
