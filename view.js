@@ -448,7 +448,6 @@ export class GuessrView {
 
   handleCorrectGuess(render_div) {
     alert("Congratulations! You guessed the Pokémon!");
-    this.#model.update_user_data();
     this.disable_keyboard();
 
     // Reveal all hints
