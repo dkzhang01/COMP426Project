@@ -30,7 +30,7 @@ export class GuessrView {
     title.textContent = "Pokemondle";
 
     const subtitle = document.createElement("p");
-    subtitle.textContent = "Get 6 chances to guess a 5-letter word.";
+    subtitle.textContent = "Get 6 chances to guess Pokemon name.";
 
     const buttons = document.createElement("div");
     buttons.className = "buttons";
