@@ -190,6 +190,8 @@ export class GuessrView {
   }
 
   render_page(render_div) {
+    render_div.innerHTML = "";
+
     this.#model.start_game().then(() => {
       this.currentRow = 0;
       this.currentCol = 0;
