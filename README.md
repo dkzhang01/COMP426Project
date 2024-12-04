@@ -2,7 +2,7 @@ Use the command npm install in the terminal at the top level of this repository 
 
 Run node setup_db.mjs in the terminal to initialize the database, this should create with db.sqlite file. If you already have one and need to reset the database, simply delete the file and run the command.
 
-This is a Pokemon Wordle-inspired web application that combines user authentication and personalized gameplay with a focus on Pokémon. Users can guess Pokémon based on hinted attributes like type, height, and weight, and their progress is tracked in a personalized Pokédex.
+This is a Pokemon Wordle-inspired web application that combines user authentication and personalized gameplay with a focus on Pokémon. Users can guess Pokémon based on hinted attributes like type(s), gerenation, and sprite. Their progress is tracked in a personalized Pokédex.
 
 Features:
 
